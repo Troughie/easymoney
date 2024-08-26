@@ -33,7 +33,7 @@ public class FriendController {
         return _res.responseEntity(result, 200);
     }
 
-    @GetMapping("/friends/accept/{id}")
+    @PostMapping("/friends/accept/{id}")
     public ResponseEntity<?> acceptFriend(@AuthenticationPrincipal User user,@PathVariable String id) {
         var result = _fService.acceptFriend(user,id);
         return _res.responseEntity(result, 200);

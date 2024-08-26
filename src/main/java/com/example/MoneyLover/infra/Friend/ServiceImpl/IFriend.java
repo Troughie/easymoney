@@ -29,17 +29,22 @@ public class IFriend implements FriendService {
     public ApiResponse<?> addFriend(User user, String id)
     {
         try {
-            User user1 = userRepo.findTopById(id);
-            if (user1 == null) {
+            User friendAdd = userRepo.findTopById(id);
+            if (friendAdd == null) {
                 return _res.createErrorResponse("User not found", 404);
             }
+            Friend existFriend = friendRepo.findFriendExist(user,StatusFriend.pending.name());
+            if(existFriend!=null){
+                return _res.createErrorResponse("Already add friend", 400);
+            }
+
             Friend friend = new Friend();
             friend.setUser(user);
-            friend.setFriend(user1);
+            friend.setFriend(friendAdd);
             friend.setStatus(StatusFriend.pending.name());
             friend.setCreatedAt(LocalDateTime.now());
             friendRepo.save(friend);
-            notificationService.sendNotificationFriend(user1,user.getUsername());
+            notificationService.sendNotificationFriend(friendAdd,user.getUsername());
             return _res.createSuccessResponse("Add friend successfully",200);
         }catch (Exception e)
         {
@@ -49,14 +54,18 @@ public class IFriend implements FriendService {
 
     public ApiResponse<?> getAllFriendOrPending(User user,String type){
         try {
-            List<Friend> friends=new ArrayList<>();
+            StatusFriend status;
             if (StatusFriend.pending.name().equalsIgnoreCase(type)) {
-                friends=friendRepo.findAllUserOrSend(user, StatusFriend.pending.name());
-            }else if(StatusFriend.accepted.name().equalsIgnoreCase(type)){
-                friends=friendRepo.findAllUserOrSend(user, StatusFriend.accepted.name());
-            }else{
-                friends=friendRepo.findAllUserOrSend(user, StatusFriend.block.name());
+                status = StatusFriend.pending;
+            } else if (StatusFriend.accepted.name().equalsIgnoreCase(type)) {
+                status = StatusFriend.accepted;
+            } else {
+                status = StatusFriend.block;
             }
+
+            // Fetch friends based on status
+            List<Friend> friends = friendRepo.findAllUserOrSend(user, status.name());
+
             return _res.createSuccessResponse("successfully",200, FriendMapper.INSTANCE.toUserResponseAll(friends));
         }catch (Exception e)
         {
@@ -70,7 +79,10 @@ public class IFriend implements FriendService {
             if (user1 == null) {
                 return _res.createErrorResponse("User not found", 404);
             }
-            Friend friend = friendRepo.findByUserAndFriend(user, user1);
+            Friend friend = friendRepo.findByUserAndFriend(user1, user);
+            if(friend==null){
+                return _res.createErrorResponse("Some thing wrong!! try later", 400);
+            }
             friend.setStatus(StatusFriend.accepted.name());
             friendRepo.save(friend);
             return _res.createSuccessResponse("Accept friend successfully",200);

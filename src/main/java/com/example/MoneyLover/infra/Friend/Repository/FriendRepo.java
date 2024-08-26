@@ -8,8 +8,11 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface FriendRepo extends JpaRepository<Friend,String> {
-    @Query("select n from Friend n where n.user = ?1 and n.status=?2")
+    @Query("select n from Friend n where n.user = ?1 or n.friend=?1 and n.status=?2")
     List<Friend> findAllUserOrSend(User user,String status);
+
+    @Query("select n from Friend n where n.user = ?1 or n.friend=?1 and n.status=?2")
+    Friend findFriendExist(User user,String status);
     @Query("select n from Friend n where n.friend = ?1 and n.status=?2")
     List<Friend> findAllUserReceive(User user,String type);
 
