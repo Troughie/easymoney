@@ -20,6 +20,7 @@ public interface FriendMapper {
         for (Friend f : friend) {
             UserResponse user =UserMapper.INSTANCE.toUserResponse(f.getFriend());
             FriendResponse fr = new FriendResponse();
+            fr.setId(f.getId());
             fr.setUser(user);
             fr.setCreatedAt(f.getCreatedAt());
             friendResponses.add(fr);

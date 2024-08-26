@@ -30,4 +30,10 @@ public class NotificationController {
         var result = notificationService.makeAllAsRead(notifications);
         return _res.responseEntity(result,result.getCode());
     }
+
+    @PostMapping("/notification/mark-as-read/{id}")
+    public ResponseEntity<?> markAsRead(@PathVariable String id) {
+        var result = notificationService.markAsRead(id);
+        return _res.responseEntity(result,result.getCode());
+    }
 }

@@ -27,15 +27,21 @@ public class FriendController {
         return _res.responseEntity(result, 200);
     }
 
-    @GetMapping("/friends-receive")
+        @GetMapping("/friends-receive")
     public ResponseEntity<?> allFriendReceive(@AuthenticationPrincipal User user) {
         var result = _fService.getAllFriendReceive(user);
         return _res.responseEntity(result, 200);
     }
 
     @PostMapping("/friends/accept/{id}")
-    public ResponseEntity<?> acceptFriend(@AuthenticationPrincipal User user,@PathVariable String id) {
-        var result = _fService.acceptFriend(user,id);
+    public ResponseEntity<?> acceptFriend(@PathVariable String id) {
+        var result = _fService.acceptFriend(id);
+        return _res.responseEntity(result, 200);
+    }
+
+    @DeleteMapping("/friends/delete/{id}")
+    public ResponseEntity<?> deleteFriend(@PathVariable String id) {
+        var result = _fService.removeFriend(id);
         return _res.responseEntity(result, 200);
     }
 }

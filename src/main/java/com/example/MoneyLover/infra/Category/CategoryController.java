@@ -32,11 +32,4 @@ public class CategoryController {
         var result =categoryService.addCategory(user,categoryAdd);
         return _res.responseEntity(result,result.getCode());
     }
-
-    @GetMapping("categories/all")
-    public ResponseEntity<?> get(@AuthenticationPrincipal User user)
-    {
-        var result =categoryService.allCategory(user);
-        return _res.responseEntity(result,result.getCode());
-    }
 }

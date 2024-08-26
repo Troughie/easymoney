@@ -16,5 +16,5 @@ public interface FriendRepo extends JpaRepository<Friend,String> {
     @Query("select n from Friend n where n.friend = ?1 and n.status=?2")
     List<Friend> findAllUserReceive(User user,String type);
 
-    Friend findByUserAndFriend(User user,User friend);
+    Friend findTopById(String id);
 }

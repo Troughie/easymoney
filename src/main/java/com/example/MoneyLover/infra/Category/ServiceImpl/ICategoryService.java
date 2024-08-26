@@ -29,50 +29,18 @@ public class ICategoryService implements CategoryService {
 
     private final RedisService _redis;
 
-    public void saveCateToCache(User user ,List<CategoryResponse> categoryResponses,String type)
-    {
-        if(type!=null)
-        {
-        _redis.setList("category"+user.getId()+type,categoryResponses,1, TimeUnit.MINUTES);
-        }else{
-            _redis.setList("category"+user.getId(),categoryResponses,1, TimeUnit.MINUTES);
-        }
-    }
-
-    public List<CategoryResponse> getCateFromCache(User user ,String type)
-    {
-        if(type!=null)
-        {
-        return _redis.getList("category"+user.getId()+type, CategoryResponse.class);
-        }else{
-            return _redis.getList("category"+user.getId(), CategoryResponse.class);
-        }
-    }
-
     @Override
     public ApiResponse<?> allCategory(User user,String type) {
-        List<CategoryResponse> categories=getCateFromCache(user,type);
-        if(categories==null || categories.isEmpty())
-        {
-            List<CategoryResponse> categoryResponses = categoryRepo.allCategoryDefault(CategoryType.valueOf(type),user);
-            saveCateToCache(user,categoryResponses,type);
-            return _res.createSuccessResponse(200,categoryResponses);
+        boolean check =!CategoryType.valueOf(type).equals(CategoryType.Expense) &&!CategoryType.valueOf(type).equals(CategoryType.Income) &&!CategoryType.valueOf(type).equals(CategoryType.Debt_Loan);
+        List<CategoryResponse> categoryResponses;
+        if(check){
+            categoryResponses = categoryRepo.allCategoryDefaultUser(user);
+        }else{
+            categoryResponses = categoryRepo.allCategoryDefault(CategoryType.valueOf(type), user);
         }
-        return _res.createSuccessResponse(200,categories);
+        return _res.createSuccessResponse(200,categoryResponses);
     }
 
-    public ApiResponse<?> allCategory(User user)
-    {
-        List<CategoryResponse> categories=getCateFromCache(user,null);
-        if(categories==null || categories.isEmpty())
-        {
-            List<CategoryResponse> categoryResponses = categoryRepo.allCategoryDefaultUser(user);
-            saveCateToCache(user,categoryResponses,null);
-            return _res.createSuccessResponse(200,categoryResponses);
-        }
-        return _res.createSuccessResponse(200,categories);
-
-    }
 
 
     public ApiResponse<?> addCategory(User user, CategoryAdd categoryAdd) {

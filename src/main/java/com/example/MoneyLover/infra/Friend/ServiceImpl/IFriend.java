@@ -73,13 +73,9 @@ public class IFriend implements FriendService {
         }
     }
 
-    public ApiResponse<?> acceptFriend(User user,String id){
+    public ApiResponse<?> acceptFriend(String id){
         try {
-            User user1 = userRepo.findTopById(id);
-            if (user1 == null) {
-                return _res.createErrorResponse("User not found", 404);
-            }
-            Friend friend = friendRepo.findByUserAndFriend(user1, user);
+            Friend friend = friendRepo.findTopById(id);
             if(friend==null){
                 return _res.createErrorResponse("Some thing wrong!! try later", 400);
             }
@@ -96,6 +92,20 @@ public class IFriend implements FriendService {
         try {
             List<Friend> friends=friendRepo.findAllUserReceive(user, StatusFriend.pending.name());
             return _res.createSuccessResponse("successfully",200,FriendMapper.INSTANCE.toUserResponseReceive(friends));
+        }catch (Exception e)
+        {
+            return _res.createErrorResponse(e.getMessage(),500);
+        }
+    }
+
+    public ApiResponse<?> removeFriend(String id){
+        try {
+            Friend friend = friendRepo.findTopById(id);
+            if(friend==null){
+                return _res.createErrorResponse("Some thing wrong!! try later", 400);
+            }
+            friendRepo.delete(friend);
+            return _res.createSuccessResponse("Remove friend successfully",200);
         }catch (Exception e)
         {
             return _res.createErrorResponse(e.getMessage(),500);

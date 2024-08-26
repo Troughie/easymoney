@@ -14,6 +14,4 @@ public interface CategoryService {
     ApiResponse<?> allCategory(User user, String type);
 
     ApiResponse<?> addCategory(User user, CategoryAdd categoryAdd);
-
-    ApiResponse<?> allCategory(User user);
 }

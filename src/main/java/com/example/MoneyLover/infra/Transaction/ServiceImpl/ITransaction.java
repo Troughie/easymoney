@@ -58,11 +58,14 @@ public class ITransaction extends ServiceExtended implements TransactionService 
         {
             boolean isDay = filterTransaction.getEnd().isAfter(today);
             filterTransaction.setEnd(isDay ? today : filterTransaction.getEnd());
+        }else{
+            filterTransaction.setEnd(today);
         }
 
         // Generate a specification based on the filter criteria
         return specFilter(user, filterTransaction);
     }
+
 
 
     private Transaction mappedTransaction(User user,Transaction_dto_add transactionDtoAdd,Transaction_Recurring transactionRecurring) {
@@ -152,12 +155,7 @@ public class ITransaction extends ServiceExtended implements TransactionService 
         return _res.createSuccessResponse(200,transRecurring);
     }
 
-    @Override
-    public ApiResponse<?> allTransactions(User user,Filter_transaction filterTransaction) {
-        LocalDate now = LocalDate.now();
-        filterTransaction.setEnd(now);
-        return specFilter(user, filterTransaction);
-    }
+
 
     private ApiResponse<?> specFilter(User user, Filter_transaction filterTransaction) {
         Wallet wallet = walletRepo.findWalletById(filterTransaction.getWallet());

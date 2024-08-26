@@ -14,6 +14,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class FriendResponse {
+    String id;
+
     LocalDateTime createdAt;
 
     UserResponse user;

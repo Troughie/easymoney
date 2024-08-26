@@ -23,10 +23,27 @@ public class INotification implements NotificationService {
         private final ResponseException _res;
         private final NotificationRepo _notificationRepo;
     public ApiResponse<?> getNotification(User user,String status) {
-        if("unread".equalsIgnoreCase(status)) {
-            return _res.createSuccessResponse(200, NotificationMapper.INSTANCE.toNotificationResponse(_notificationRepo.findAllByUsersContainingAndUnreadEquals(user,true)));
+        try {
+            if("unread".equalsIgnoreCase(status)) {
+                return _res.createSuccessResponse(200, NotificationMapper.INSTANCE.toNotificationResponse(_notificationRepo.findAllByUsersContainingAndUnreadEquals(user,true)));
+            }
+            return _res.createSuccessResponse(200, NotificationMapper.INSTANCE.toNotificationResponse(_notificationRepo.findAllByUsersContaining(user)));
+        }catch (Exception e){
+            return _res.createErrorResponse(e.getMessage(),500);
         }
-        return _res.createSuccessResponse(200, NotificationMapper.INSTANCE.toNotificationResponse(_notificationRepo.findAllByUsersContaining(user)));
+    }
+
+    public ApiResponse<?> markAsRead(String id) {
+        try {
+            Notification notification = _notificationRepo.findById(id).orElse(null);
+            assert notification != null;
+            notification.setUnread(false);
+            _notificationRepo.save(notification);
+            return _res.createSuccessResponse("success",200);
+        }catch (Exception e)
+        {
+            return _res.createErrorResponse(e.getMessage(),500);
+        }
     }
 
     public ApiResponse<?> makeAllAsRead(List<NotificationResponse> notifications) {

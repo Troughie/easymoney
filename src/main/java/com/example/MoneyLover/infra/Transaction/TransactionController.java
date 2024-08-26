@@ -32,18 +32,7 @@ public class TransactionController {
         return _res.responseEntity(result,result.getCode());
     }
 
-    @GetMapping("transactions/open")
-    public ResponseEntity<?> gopen(@RequestParam("category")String category
-    )
-    {
-        return _res.responseEntity(category,200);
-    }
-    @GetMapping("transactions/all")
-    public ResponseEntity<?> getAll(@AuthenticationPrincipal User user,@ModelAttribute Filter_transaction  filterTransaction)
-    {
-        var result =transactionService.allTransactions(user,filterTransaction);
-        return _res.responseEntity(result,result.getCode());
-    }
+
 
     @PostMapping("transaction/add")
     public ResponseEntity<?> add(@AuthenticationPrincipal User user,@RequestBody Transaction_dto_add transactionDtoAdd)

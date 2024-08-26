@@ -15,10 +15,7 @@ public interface TransactionService {
 
     ApiResponse<?> allTransaction(User user, Filter_transaction filterTransaction);
 
-
     ApiResponse<?> calculatorBalanceOpenNAnd(String wallet_id, LocalDate start, LocalDate end);
-
-    ApiResponse<?> allTransactions(User user,Filter_transaction filterTransaction);
 
     ApiResponse<?> deleteTransaction(String id,User user,String walletId);
     ApiResponse<?> addTransactionRecurring(User user , Transaction_Recurring transactionRecurring);

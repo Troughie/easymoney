@@ -10,5 +10,6 @@ public interface NotificationService {
     ApiResponse<?> getNotification(User user,String status);
     void sendNotificationTransaction(List<User> users, String user, String wallet, String category);
     void sendNotificationFriend(User user,String creator);
+    ApiResponse<?> markAsRead(String id);
     ApiResponse<?> makeAllAsRead(List<NotificationResponse> notifications);
 }
