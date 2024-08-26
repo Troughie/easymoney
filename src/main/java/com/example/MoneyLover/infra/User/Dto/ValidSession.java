@@ -14,14 +14,12 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class OtpRequest {
+public class ValidSession {
     @NotBlank
     @NotNull
-    @Email
-    String account;
+    String session;
 
     @NotBlank
     @NotNull
-    @Min(8)
-    String otp;
+    String account;
 }

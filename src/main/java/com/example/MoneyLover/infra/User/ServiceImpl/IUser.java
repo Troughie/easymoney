@@ -22,6 +22,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -87,14 +88,17 @@ public class IUser implements UserService {
     public ApiResponse<?> forgot(EmailForgot emailForgot)
     {
         try {
-            String otp =generateString.generateString(8, typeGenerate.number);
+            User user = userRepo.findTopByEmail(emailForgot.getEmail());
+            String otp = GenerateString.generateString(8, typeGenerate.number);
+            String session = GenerateString.generateString(14,typeGenerate.string);
             //set otp to  cache
             redisService.setValue("otp"+emailForgot.getEmail(),otp,5, TimeUnit.MINUTES);
+            redisService.setValue("session"+user.getId(),session,11, TimeUnit.MINUTES);
             //send email
             EmailForgotResponse emailForgotResponse = new EmailForgotResponse(emailForgot.getEmail(),otp);
-            MailDto<EmailForgotResponse> maildto = new MailDto<EmailForgotResponse>(emailForgot.getEmail(),"Forgot password in money lover app",emailForgotResponse,"mailer");
+            MailDto<EmailForgotResponse> maildto = new MailDto<EmailForgotResponse>(emailForgot.getEmail(),"Forgot password in money lover app",emailForgotResponse,"mail/mailer.html");
             mailService.sendMailForgot(maildto);
-            return _res.createSuccessResponse("Success", 200);
+            return _res.createSuccessResponse("Success", 200,new Object[]{user.getId(),session});
         }catch (Exception e)
         {
             return _res.createErrorResponse(e.getMessage(),500);
@@ -102,14 +106,28 @@ public class IUser implements UserService {
         }
     }
 
+    public ApiResponse<?> validSession(ValidSession validSession){
+        try {
+        String session =redisService.getValue("session"+validSession.getAccount(),String.class);
+        if(!validSession.getSession().equalsIgnoreCase(session)){
+            return _res.createSuccessResponse( 200,false);
+        }
+
+        return _res.createSuccessResponse( 200,true);
+        }catch (Exception e){
+            return _res.createErrorResponse(e.getMessage(), 500);
+        }
+    }
+
     public ApiResponse<?> submitOtp(OtpRequest otpRequest) throws BadRequestException {
         try {
-            String otpCurrent =redisService.getValue("otp"+otpRequest.getEmail(),String.class);
+            User user = userRepo.findTopById(otpRequest.getAccount());
+            String otpCurrent =redisService.getValue("otp"+user.getEmail(),String.class);
             String otpSent = otpRequest.getOtp();
             if(!otpSent.equals(otpCurrent)){
                 throw new BadRequestException("Otp invalid or expired!!");
             }
-            redisService.setValue(otpRequest.getEmail(),otpRequest.getEmail(),5,TimeUnit.MINUTES);
+            redisService.setValue(user.getEmail(),user.getEmail(),5,TimeUnit.MINUTES);
             return _res.createSuccessResponse("Success", 200);
         }catch (Exception e)
         {
@@ -120,16 +138,15 @@ public class IUser implements UserService {
     public ApiResponse<?> changePasswordForgot(PasswordNew passwordNew)
     {
         try {
-            String email =passwordNew.getEmail();
-            if(!email.equals(redisService.getValue(email,String.class)))
+            User user = userRepo.findTopById(passwordNew.getAccount());
+            if(!user.getEmail().equals(redisService.getValue(user.getEmail(),String.class)))
             {
                 throw new BadRequestException("Expired time to create new password!!!");
             }
 
-            User user = userRepo.findTopByEmail(email);
             user.setPassword(new BCryptPasswordEncoder().encode(passwordNew.getPassword()));
             userRepo.save(user);
-            removeCache(email);
+            removeCache(user.getEmail());
             return _res.createSuccessResponse("Success", 200);
 
         }catch (Exception e)
@@ -183,4 +200,17 @@ public class IUser implements UserService {
         return _res.createErrorResponse("Refresh failure", HttpStatus.BAD_REQUEST.value());
     }
 
+    @Override
+    public ApiResponse<?> getUser(String code) {
+        User user = userRepo.findUserByEmailOrId(code);
+        if(user != null)
+        {
+            return _res.createSuccessResponse("Success", 200,UserMapper.INSTANCE.toUserResponse(user));
+        }
+        return _res.createSuccessResponse("Success", 200);
+    }
+
+    public ApiResponse<?> getUserAll(String code){
+        return _res.createSuccessResponse("Success", 200);
+    }
 }

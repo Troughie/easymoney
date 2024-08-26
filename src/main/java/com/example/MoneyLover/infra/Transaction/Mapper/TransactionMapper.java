@@ -20,7 +20,9 @@ public interface TransactionMapper {
     Transaction toTransaction (Transaction_dto_add transactionDtoAdd);
 
     @Mapping(target = "category", source = "category")
+    @Mapping(target = "user", source = "user")
     Transaction_Response toTransactionDto(Transaction transaction);
+
 
     @Mapping(target = "wallet", source = "wallet", ignore = true)
     @Mapping(target = "category", source = "category", ignore = true)

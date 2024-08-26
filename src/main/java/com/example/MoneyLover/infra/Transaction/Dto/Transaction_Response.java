@@ -1,6 +1,8 @@
 package com.example.MoneyLover.infra.Transaction.Dto;
 
 import com.example.MoneyLover.infra.Category.Entity.Category;
+import com.example.MoneyLover.infra.User.Dto.UserResponse;
+import com.example.MoneyLover.infra.User.Entity.User;
 import com.example.MoneyLover.infra.Wallet.Entity.Wallet;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotBlank;
@@ -32,4 +34,6 @@ public class Transaction_Response {
     Category category;
 
     LocalDate date;
+
+    UserResponse user;
 }

@@ -2,9 +2,11 @@ package com.example.MoneyLover.shares.Service;
 
 import com.example.MoneyLover.infra.Bills.DT0.BillRecurring;
 import com.example.MoneyLover.infra.Category.Entity.CategoryType;
-import com.example.MoneyLover.infra.Recurring.Entity.Recurring;
 import com.example.MoneyLover.infra.Transaction.Dto.Transaction_Recurring;
 import com.example.MoneyLover.infra.Transaction.Entity.Transaction;
+import com.example.MoneyLover.infra.User.Entity.User;
+import com.example.MoneyLover.infra.Wallet.Entity.Manager;
+import com.example.MoneyLover.infra.Wallet.Entity.Permission;
 import com.example.MoneyLover.infra.Wallet.Entity.Wallet;
 
 import java.time.LocalDate;
@@ -16,15 +18,27 @@ public class ServiceExtended {
     public List<Transaction> getTransactionsByTypeAndDate(Wallet wallet, CategoryType type, LocalDate date) {
 
         return wallet.getTransactions().stream()
-                .filter(tran -> tran.getCategory().getCategoryType().equals(type))
+                .filter(tran -> tran.getCategory().getCategoryType().equals(type) && tran.getRecurring() ==null)
                 .filter(tran -> {
                             if(date!=null){
-                                return tran.getDate().isBefore(date)||tran.getDate().isEqual(date);
+                                    return tran.getDate().isBefore(date)||tran.getDate().isEqual(date);
                             }else{
-                                return tran.getDate().isAfter(LocalDate.now())||tran.getDate().isEqual(LocalDate.now());
+                                return tran.getDate().isBefore(LocalDate.now())||tran.getDate().isEqual(LocalDate.now());
                             }
                         }
                 )
+                .filter(tran -> {
+                    // Get the current user's ID
+                    String userId = tran.getUser().getId();
+
+                    // Collect manager userIds from wallet
+                    List<String> managerUserIds = wallet.getManagers().stream()
+                            .map(manager -> manager.getUser().getId())
+                            .toList();
+
+                    // Include transactions matching the current user's ID or any of the manager userIds
+                    return userId.equals(wallet.getUser().getId()) || managerUserIds.contains(userId);
+                })
                 .collect(Collectors.toList());
     }
 
@@ -32,6 +46,13 @@ public class ServiceExtended {
         return transactions.stream()
                 .mapToLong(Transaction::getAmount)
                 .sum();
+    }
+
+    public boolean isPermission(Wallet wallet,User user, Permission permission) {
+        Manager manager = wallet.getManagers().stream().filter(m->m.getUser().getId().equals(user.getId())).findFirst().orElse(null);
+        boolean Owner =wallet.getUser().getId().equals(user.getId());
+        if(Owner) return false;
+        return (manager!=null && !(manager.getPermission().equals(permission) || manager.getPermission().equals(Permission.All)));
     }
 
     public LocalDate firstDayOfMonth(){

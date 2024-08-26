@@ -7,10 +7,11 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface UserMapper {
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
     @Mapping(source = "email", target = "email")
+    @Mapping(source = "id", target = "id")
     UserResponse toUserResponse(User user);
     @Mapping(source = "email", target = "email")
     @Mapping(source = "password", target = "password",ignore = true)

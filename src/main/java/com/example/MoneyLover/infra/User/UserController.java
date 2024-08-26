@@ -6,10 +6,7 @@ import com.example.MoneyLover.shares.HandleException.ResponseException;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -67,4 +64,18 @@ public class UserController {
         return _res.responseEntity(result,result.getCode());
     }
 
+    @PostMapping("auth/validate-session")
+    public ResponseEntity<?> validSession(@RequestBody ValidSession validSession)
+    {
+        var result = iUser.validSession(validSession);
+        return _res.responseEntity(result,result.getCode());
+    }
+
+
+    @PostMapping("user/{code}")
+    public ResponseEntity<?> getByCode(@PathVariable String code)
+    {
+        var result = iUser.getUser(code);
+        return _res.responseEntity(result,result.getCode());
+    }
 }

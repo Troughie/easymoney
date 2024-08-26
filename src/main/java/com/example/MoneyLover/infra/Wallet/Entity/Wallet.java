@@ -48,5 +48,9 @@ public class Wallet {
 
     @OneToMany(mappedBy = "wallet",cascade = CascadeType.ALL)
     @JsonIgnore
+    List<Manager> managers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "wallet",cascade = CascadeType.ALL)
+    @JsonIgnore
     List<Budget> budgets = new ArrayList<>();
 }

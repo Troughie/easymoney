@@ -28,7 +28,6 @@ public class TransactionController {
     @GetMapping("transactions")
     public ResponseEntity<?> get(@AuthenticationPrincipal User user, @ModelAttribute Filter_transaction filterTransaction)
     {
-        System.out.println("hello");
         var result =transactionService.allTransaction(user,filterTransaction);
         return _res.responseEntity(result,result.getCode());
     }
@@ -61,9 +60,10 @@ public class TransactionController {
     }
 
     @DeleteMapping("transaction/delete/{id}")
-    public ResponseEntity<?> deleteTransaction(@AuthenticationPrincipal User user, @PathVariable String id)
+    public ResponseEntity<?> deleteTransaction(@AuthenticationPrincipal User user, @PathVariable String id,@RequestBody String walletId)
     {
-        var result =transactionService.deleteTransaction(id,user);
+        walletId = walletId.replace("\"", "");
+        var result =transactionService.deleteTransaction(id,user,walletId);
         return _res.responseEntity(result,result.getCode());
     }
 

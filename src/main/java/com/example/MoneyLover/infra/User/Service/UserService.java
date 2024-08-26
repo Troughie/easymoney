@@ -13,6 +13,7 @@ public interface UserService {
 
     User getUserByPhone(String phone);
 
+
     ApiResponse<?> register(SignInDto signInDto);
     ApiResponse<?> forgot(EmailForgot emailForgot);
 
@@ -23,4 +24,8 @@ public interface UserService {
     ApiResponse<?> changePassword(PasswordChange passwordChange);
 
     ApiResponse<?> refresh(RefreshToken refreshToken) ;
+
+    ApiResponse<?> getUser(String code) ;
+
+    ApiResponse<?> validSession(ValidSession validSession);
 }

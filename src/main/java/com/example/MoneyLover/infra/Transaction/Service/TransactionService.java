@@ -20,7 +20,7 @@ public interface TransactionService {
 
     ApiResponse<?> allTransactions(User user,Filter_transaction filterTransaction);
 
-    ApiResponse<?> deleteTransaction(String id,User user);
+    ApiResponse<?> deleteTransaction(String id,User user,String walletId);
     ApiResponse<?> addTransactionRecurring(User user , Transaction_Recurring transactionRecurring);
 
     ApiResponse<?> allTransactionRecurring(User user);

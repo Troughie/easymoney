@@ -16,7 +16,15 @@ public interface WalletRepo extends JpaRepository<Wallet,String>,ListPagingAndSo
 
     List<Wallet> findAllByUser(User user);
 
+    @Query("select w from Wallet w left join w.managers m where w.user = ?1 or m.user = ?1")
+    List<Wallet> findWalletsAll(User user);
+
+    @Query("select w from Wallet w left join w.managers m where w.user = ?1 or m.user = ?1")
+    Page<Wallet> findWalletsAll(User user, Pageable pageable);
+
     Wallet findWalletById(String id);
+
+    Wallet findWalletByIdAndUser(String id,User user);
 
     @Query("select w from Wallet w where w.user=?1 and w.main=true")
     Wallet findWalletIsMainTrue(User user);

@@ -3,6 +3,7 @@ package com.example.MoneyLover.utils;
 
 import com.example.MoneyLover.infra.Transaction.Dto.Filter_transaction;
 import com.example.MoneyLover.infra.Transaction.Entity.Transaction;
+import com.example.MoneyLover.infra.Wallet.Entity.Manager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
@@ -12,7 +13,7 @@ import java.util.List;
 
 public class SpecificationDynamic {
 
-    public static Specification<Transaction> byFilter(Filter_transaction filter, String userID,boolean isRemind) {
+    public static Specification<Transaction> byFilter(Filter_transaction filter, String userID, boolean isRemind, List<Manager> managers) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
@@ -32,7 +33,7 @@ public class SpecificationDynamic {
                 predicates.add(inClause);
             }
 
-            if(userID!=null) {
+            if (managers.isEmpty()) {
                 predicates.add(criteriaBuilder.equal(root.get("user").get("id"), userID));
             }
 

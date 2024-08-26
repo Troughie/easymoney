@@ -1,6 +1,5 @@
-package com.example.MoneyLover.infra.User.Dto;
+package com.example.MoneyLover.infra.Wallet.Dto;
 
-import com.example.MoneyLover.shares.Annotation.Column;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -11,9 +10,10 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class UserResponse {
-    String id;
-    String username;
-    String email;
-    boolean is_enable;
+public class WalletManager {
+    String userId;
+
+    String walletId;
+
+    String permission;
 }

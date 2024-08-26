@@ -1,6 +1,7 @@
 package com.example.MoneyLover.infra.User.Entity;
 
 import com.example.MoneyLover.infra.Category.Entity.Category;
+import com.example.MoneyLover.infra.Friend.Entity.Friend;
 import com.example.MoneyLover.infra.Wallet.Entity.Wallet;
 import com.example.MoneyLover.shares.Annotation.Column;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -42,6 +43,10 @@ public class User {
     @OneToMany(mappedBy = "user",fetch = FetchType.EAGER)
     @JsonIgnore
     List<Category> categories =new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @JsonIgnore
+    private List<Friend> friends = new ArrayList<>();
 
     public User(String name, String password, List<GrantedAuthority> grantedAuths) {
     }

@@ -18,7 +18,7 @@ public class PasswordNew {
     @NotBlank
     @NotNull
     @Email
-    String email;
+    String account;
 
     @NotBlank
     @NotNull

@@ -5,6 +5,7 @@ import com.example.MoneyLover.infra.Category.Entity.Category;
 import com.example.MoneyLover.infra.Category.Entity.CategoryType;
 import com.example.MoneyLover.infra.Category.Entity.Debt_loan_type;
 import com.example.MoneyLover.infra.Category.Repository.CategoryRepo;
+import com.example.MoneyLover.infra.Notification.Service.NotificationService;
 import com.example.MoneyLover.infra.Recurring.Entity.Recurring;
 import com.example.MoneyLover.infra.Recurring.Repository.RecurringRepo;
 import com.example.MoneyLover.infra.Transaction.Dto.*;
@@ -13,6 +14,8 @@ import com.example.MoneyLover.infra.Transaction.Mapper.TransactionMapper;
 import com.example.MoneyLover.infra.Transaction.Repository.TransactionRepo;
 import com.example.MoneyLover.infra.Transaction.Service.TransactionService;
 import com.example.MoneyLover.infra.User.Entity.User;
+import com.example.MoneyLover.infra.Wallet.Entity.Manager;
+import com.example.MoneyLover.infra.Wallet.Entity.Permission;
 import com.example.MoneyLover.infra.Wallet.Entity.Wallet;
 import com.example.MoneyLover.infra.Wallet.Repository.WalletRepo;
 import com.example.MoneyLover.shares.Entity.ApiResponse;
@@ -32,6 +35,7 @@ public class ITransaction extends ServiceExtended implements TransactionService 
     private final ResponseException _res;
 
     private final TransactionRepo transactionRepo;
+    private final NotificationService notificationService;
     private final CategoryRepo categoryRepo;
     private final WalletRepo walletRepo;
     private final RecurringRepo recurringRepo;
@@ -81,8 +85,18 @@ public class ITransaction extends ServiceExtended implements TransactionService 
     }
     public ApiResponse<?> addTransaction(User user , Transaction_dto_add transactionDtoAdd){
         try {
+            Wallet wallet =walletRepo.findWalletById(transactionDtoAdd.getWallet());
+            if(wallet==null){
+                return _res.createErrorResponse("Wallet not found",404);
+            }
+            List<User> users =wallet.getManagers().stream().map(Manager::getUser).toList();
+            boolean isPermission=isPermission(wallet,user,Permission.Write);
+            if(isPermission){
+                    return _res.createErrorResponse("Can't add transaction, you don't have permission!!!",400);
+            }
             Transaction transaction=mappedTransaction(user,transactionDtoAdd,null);
             transactionRepo.save(transaction);
+            notificationService.sendNotificationTransaction(users,user.getUsername(),wallet.getName(),transaction.getCategory().getName());
             _redis.removeValue("wallet"+user.getId());
             return _res.createSuccessResponse("Add transaction successfully",200,transaction);
         }catch (Exception e)
@@ -121,7 +135,6 @@ public class ITransaction extends ServiceExtended implements TransactionService 
         if(end!=null&&end.isAfter(today))
         {
             tranEnding = tranBalanceMonth(today, wallet);
-
         }else{
             tranEnding = tranBalanceMonth(end, wallet);
         }
@@ -144,7 +157,9 @@ public class ITransaction extends ServiceExtended implements TransactionService 
     }
 
     private ApiResponse<?> specFilter(User user, Filter_transaction filterTransaction) {
-        Specification<Transaction> spec = SpecificationDynamic.byFilter(filterTransaction,user.getId(),false);
+        Wallet wallet = walletRepo.findWalletById(filterTransaction.getWallet());
+
+        Specification<Transaction> spec = SpecificationDynamic.byFilter(filterTransaction,user.getId(),false,wallet.getManagers());
         List<Transaction> transactionPage = transactionRepo.findAll(spec);
 
         List<Transaction_Response> transactions = transactionPage.stream().map(TransactionMapper.INSTANCE::toTransactionDto).toList();
@@ -170,9 +185,16 @@ public class ITransaction extends ServiceExtended implements TransactionService 
         return wallet.getBalance() -balancePlusEnding +balanceDivideEnding+balancePlusDebt-balanceDivideDebt;
     }
 
-    public ApiResponse<?> deleteTransaction(String id,User user)
+
+
+    public ApiResponse<?> deleteTransaction(String id,User user,String walletId)
     {
         try {
+            Wallet wallet =walletRepo.findWalletById(walletId);
+            boolean isPermission=isPermission(wallet,user,Permission.Delete);
+            if(isPermission){
+                return _res.createErrorResponse("Can't delete transaction, you don't have permission!!!",400);
+            }
             transactionRepo.deleteById(id);
             _redis.removeValue("wallet"+user.getId());
             return _res.createSuccessResponse("Delete transaction successfully",200);
@@ -197,5 +219,6 @@ public class ITransaction extends ServiceExtended implements TransactionService 
             return _res.createErrorResponse(e.getMessage(),500);
         }
     }
+
 
 }

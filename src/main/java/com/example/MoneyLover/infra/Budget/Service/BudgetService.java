@@ -11,5 +11,5 @@ public interface BudgetService {
     ApiResponse<?> getBudget(User user, String wallet,String type);
 
     ApiResponse<?> saveBudget(User user , Budget_Dto budgetDto);
-    ApiResponse<?> deleteBudget(String id);
+    ApiResponse<?> deleteBudget(String id,User user,String walletId);
 }

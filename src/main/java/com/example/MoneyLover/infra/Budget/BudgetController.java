@@ -41,9 +41,10 @@ public class BudgetController {
     }
 
     @DeleteMapping("budget/delete/{id}")
-    public ResponseEntity<?> delete(@PathVariable String id)
+    public ResponseEntity<?> delete(@AuthenticationPrincipal User user,@PathVariable String id,@RequestBody String walletId)
     {
-        var result =budgetService.deleteBudget(id);
+        walletId = walletId.replace("\"", "");
+        var result =budgetService.deleteBudget(id,user,walletId);
         return _res.responseEntity(result,result.getCode());
     }
 }

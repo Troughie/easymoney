@@ -3,6 +3,7 @@ package com.example.MoneyLover.infra.Wallet;
 
 import com.example.MoneyLover.infra.User.Dto.SignInDto;
 import com.example.MoneyLover.infra.User.Entity.User;
+import com.example.MoneyLover.infra.Wallet.Dto.WalletManager;
 import com.example.MoneyLover.infra.Wallet.Dto.Wallet_dto;
 import com.example.MoneyLover.infra.Wallet.Entity.Wallet;
 import com.example.MoneyLover.infra.Wallet.Entity.WalletType;
@@ -59,9 +60,30 @@ public class WalletController {
     }
 
     @DeleteMapping("wallet/delete/{id}")
-    public ResponseEntity<?> delete(@PathVariable String id)
+    public ResponseEntity<?> delete(@AuthenticationPrincipal User user,@PathVariable String id)
     {
-        var result =walletService.deleteWallet(id);
+        var result =walletService.deleteWallet(user,id);
+        return _res.responseEntity(result,result.getCode());
+    }
+
+    @PostMapping("manager/add")
+    public ResponseEntity<?> addManager(@AuthenticationPrincipal User user,@RequestBody WalletManager manager)
+    {
+        var result =walletService.addManager(user,manager);
+        return _res.responseEntity(result,result.getCode());
+    }
+
+    @PostMapping("manager/permission/change")
+    public ResponseEntity<?> changePermission(@AuthenticationPrincipal User user,@RequestBody WalletManager manager)
+    {
+        var result =walletService.changePermission(user,manager);
+        return _res.responseEntity(result,result.getCode());
+    }
+
+    @PostMapping("manager/delete")
+    public ResponseEntity<?> deleteManager(@AuthenticationPrincipal User user,@RequestBody WalletManager manager)
+    {
+        var result =walletService.removeManager(user,manager);
         return _res.responseEntity(result,result.getCode());
     }
 }
