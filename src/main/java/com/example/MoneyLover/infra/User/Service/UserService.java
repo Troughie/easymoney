@@ -28,4 +28,6 @@ public interface UserService {
     ApiResponse<?> getUser(String code) ;
 
     ApiResponse<?> validSession(ValidSession validSession);
+
+    ApiResponse<?> getUserAll(String code);
 }

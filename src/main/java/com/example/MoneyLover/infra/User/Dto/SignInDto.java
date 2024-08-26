@@ -23,4 +23,6 @@ public class SignInDto {
     @NotNull
     @Min(6)
     String password;
+
+    String username;
 }

@@ -74,9 +74,14 @@ public class IUser implements UserService {
     public ApiResponse<?> register(SignInDto signInDto)
     {
         try {
+            User user1 = userRepo.findTopByEmail(signInDto.getEmail());
+            if (user1 != null) {
+                return _res.createErrorResponse("Email already exists", 500);
+            }
+
             User user = UserMapper.INSTANCE.registerUser(signInDto);
             user.setPassword(passwordEncoder.encode(signInDto.getPassword()));
-            user.setUsername(GenerateString.generateString(10,typeGenerate.string));
+            user.setUsername(signInDto.getUsername().isBlank()?GenerateString.generateString(10,typeGenerate.string):signInDto.getUsername());
             userRepo.save(user);
             return _res.createSuccessResponse("Register successfully", 200,user);
         }catch(Exception e)
@@ -211,6 +216,11 @@ public class IUser implements UserService {
     }
 
     public ApiResponse<?> getUserAll(String code){
-        return _res.createSuccessResponse("Success", 200);
+        try{
+            List<User> users = userRepo.findAllContain(code);
+            return _res.createSuccessResponse("Success", 200,users.stream().map(UserMapper.INSTANCE::toUserResponse).toList());
+        }catch (Exception e){
+            return _res.createErrorResponse(e.getMessage(), 500);
+        }
     }
 }

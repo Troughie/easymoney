@@ -15,7 +15,7 @@ public class FriendController {
     private final ResponseException _res;
     private final FriendService _fService;
 
-    @PostMapping("/friend/{id}")
+    @PostMapping("/friend/add/{id}")
     public ResponseEntity<?> index(@AuthenticationPrincipal User user, @PathVariable String id) {
         var result = _fService.addFriend(user, id);
         return _res.responseEntity(result, 200);

@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDateTime;
+
 @Setter
 @Getter
 @Entity
@@ -24,6 +26,8 @@ public class Friend {
     @ManyToOne
     @JoinColumn(name = "friend_id")
     private User friend;
+
+    LocalDateTime createdAt;
 
     // Status could be used to determine if the friendship is pending, accepted, etc.
     private String status;

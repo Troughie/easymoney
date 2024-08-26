@@ -2,6 +2,7 @@ package com.example.MoneyLover.infra.Friend.ServiceImpl;
 
 import com.example.MoneyLover.infra.Friend.Entity.Friend;
 import com.example.MoneyLover.infra.Friend.Entity.StatusFriend;
+import com.example.MoneyLover.infra.Friend.Mapper.FriendMapper;
 import com.example.MoneyLover.infra.Friend.Repository.FriendRepo;
 import com.example.MoneyLover.infra.Friend.Service.FriendService;
 import com.example.MoneyLover.infra.Notification.Repository.NotificationRepo;
@@ -13,6 +14,7 @@ import com.example.MoneyLover.shares.HandleException.ResponseException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +37,7 @@ public class IFriend implements FriendService {
             friend.setUser(user);
             friend.setFriend(user1);
             friend.setStatus(StatusFriend.pending.name());
+            friend.setCreatedAt(LocalDateTime.now());
             friendRepo.save(friend);
             notificationService.sendNotificationFriend(user1,user.getUsername());
             return _res.createSuccessResponse("Add friend successfully",200);
@@ -54,7 +57,7 @@ public class IFriend implements FriendService {
             }else{
                 friends=friendRepo.findAllUserOrSend(user, StatusFriend.block.name());
             }
-            return _res.createSuccessResponse("successfully",200,friends);
+            return _res.createSuccessResponse("successfully",200, FriendMapper.INSTANCE.toUserResponseAll(friends));
         }catch (Exception e)
         {
             return _res.createErrorResponse(e.getMessage(),500);
@@ -80,7 +83,7 @@ public class IFriend implements FriendService {
     public ApiResponse<?> getAllFriendReceive(User user){
         try {
             List<Friend> friends=friendRepo.findAllUserReceive(user, StatusFriend.pending.name());
-            return _res.createSuccessResponse("successfully",200,friends);
+            return _res.createSuccessResponse("successfully",200,FriendMapper.INSTANCE.toUserResponseReceive(friends));
         }catch (Exception e)
         {
             return _res.createErrorResponse(e.getMessage(),500);

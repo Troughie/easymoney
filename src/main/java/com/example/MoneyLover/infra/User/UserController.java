@@ -78,4 +78,11 @@ public class UserController {
         var result = iUser.getUser(code);
         return _res.responseEntity(result,result.getCode());
     }
+
+    @GetMapping("user/search/{code}")
+    public ResponseEntity<?> getAll(@PathVariable String code)
+    {
+        var result = iUser.getUserAll(code);
+        return _res.responseEntity(result,result.getCode());
+    }
 }

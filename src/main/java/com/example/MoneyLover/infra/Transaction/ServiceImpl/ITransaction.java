@@ -89,10 +89,13 @@ public class ITransaction extends ServiceExtended implements TransactionService 
             if(wallet==null){
                 return _res.createErrorResponse("Wallet not found",404);
             }
-            List<User> users =wallet.getManagers().stream().map(Manager::getUser).toList();
+            List<User> users = new java.util.ArrayList<>(wallet.getManagers().stream().map(Manager::getUser).toList());
             boolean isPermission=isPermission(wallet,user,Permission.Write);
             if(isPermission){
                     return _res.createErrorResponse("Can't add transaction, you don't have permission!!!",400);
+            }
+            if(!wallet.getUser().getId().equals(user.getId())){
+                users.add(user);
             }
             Transaction transaction=mappedTransaction(user,transactionDtoAdd,null);
             transactionRepo.save(transaction);
