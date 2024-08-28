@@ -109,4 +109,9 @@ public class ServiceExtended {
             default -> date;
         };
     }
+
+    public void sendNotiBudget()
+    {
+
+    }
 }

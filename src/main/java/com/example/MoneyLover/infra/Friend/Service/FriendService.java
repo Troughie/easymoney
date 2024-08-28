@@ -9,8 +9,6 @@ public interface FriendService {
     ApiResponse<?> addFriend(User user, String id);
 
     ApiResponse<?> getAllFriendOrPending(User user,String type);
-    ApiResponse<?> getAllFriendReceive(User user);
-    ApiResponse<?> acceptFriend(String id);
-
+    ApiResponse<?> acceptFriend(User user,String id);
     ApiResponse<?> removeFriend(String id);
 }

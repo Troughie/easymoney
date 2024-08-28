@@ -29,7 +29,6 @@ public class Friend {
 
     LocalDateTime createdAt;
 
-    // Status could be used to determine if the friendship is pending, accepted, etc.
     private String status;
 
 }

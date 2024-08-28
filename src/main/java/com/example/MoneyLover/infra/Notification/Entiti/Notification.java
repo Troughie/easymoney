@@ -37,6 +37,6 @@ public class Notification {
 
     LocalDateTime createdDate;
 
-    TypeNotification type;
+    String type;
     boolean unread;
 }

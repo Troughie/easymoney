@@ -88,15 +88,15 @@ public class IWalletService extends ServiceExtended implements WalletService  {
     public ApiResponse<?> addManager(User user,WalletManager walletManager){
         Wallet wallet = walletRepo.findWalletById(walletManager.getWalletId());
         User user1 =userRepository.findTopById(walletManager.getUserId());
-
         if(user1==null){
             return _res.createErrorResponse("User not found",404);
         }
         if(wallet==null){
             return _res.createErrorResponse("Wallet not found",404);
         }
+        Manager managerFound = wallet.getManagers().stream().filter(m->m.getUser().getId().equals(user.getId())).findFirst().orElse(null);
 
-        if(!wallet.getUser().getId().equals(user.getId())){
+        if(!wallet.getUser().getId().equals(user.getId()) || (managerFound!=null && !managerFound.getPermission().equals(Permission.All)) ){
             return _res.createErrorResponse("Can't add manager, you don't have permission!!!",400);
         }
 

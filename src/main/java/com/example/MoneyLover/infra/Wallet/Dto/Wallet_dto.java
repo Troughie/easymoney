@@ -1,5 +1,6 @@
 package com.example.MoneyLover.infra.Wallet.Dto;
 
+import com.example.MoneyLover.infra.User.Dto.UserResponse;
 import com.example.MoneyLover.infra.Wallet.Entity.Manager;
 import com.example.MoneyLover.infra.Wallet.Entity.WalletType;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -39,5 +40,7 @@ public class Wallet_dto {
     LocalDate end_date;
 
     List<ManagerResponse> managers;
+
+    UserResponse user;
 
 }

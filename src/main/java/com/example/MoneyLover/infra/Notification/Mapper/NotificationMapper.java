@@ -13,5 +13,7 @@ public interface NotificationMapper {
     NotificationMapper INSTANCE = Mappers.getMapper(NotificationMapper.class);
 
     @Mapping(source = "id",target = "id")
+    @Mapping(source = "type",target = "type")
+    @Mapping(source = "message",target = "message")
     List<NotificationResponse> toNotificationResponse(List<Notification> notification);
 }

@@ -3,6 +3,7 @@ package com.example.MoneyLover.infra.User;
 import com.example.MoneyLover.infra.User.Dto.*;
 import com.example.MoneyLover.infra.User.ServiceImpl.IUser;
 import com.example.MoneyLover.shares.HandleException.ResponseException;
+import jakarta.validation.Valid;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,41 +32,41 @@ public class UserController {
     }
 
     @PostMapping("auth/register")
-    public ResponseEntity<?> register(@RequestBody SignInDto signInDto)
+    public ResponseEntity<?> register(@RequestBody @Valid SignInDto signInDto)
     {
         var result = iUser.register(signInDto);
         return _res.responseEntity(result,result.getCode());
     }
 
     @PostMapping("auth/forgot")
-    public ResponseEntity<?> forgot(@RequestBody EmailForgot emailForgot)
+    public ResponseEntity<?> forgot(@RequestBody @Valid EmailForgot emailForgot)
     {
         var result = iUser.forgot(emailForgot);
         return _res.responseEntity(result,result.getCode());
     }
 
     @PostMapping("auth/submitOtp")
-    public ResponseEntity<?> submitOtp(@RequestBody OtpRequest otpRequest) throws BadRequestException {
+    public ResponseEntity<?> submitOtp(@RequestBody @Valid OtpRequest otpRequest) throws BadRequestException {
         var result = iUser.submitOtp(otpRequest);
         return _res.responseEntity(result,result.getCode());
     }
 
     @PostMapping("auth/changePassword")
-    public ResponseEntity<?> changePassword(@RequestBody PasswordChange passwordChange)
+    public ResponseEntity<?> changePassword(@RequestBody @Valid PasswordChange passwordChange)
     {
         var result = iUser.changePassword(passwordChange);
         return _res.responseEntity(result,result.getCode());
     }
 
     @PostMapping("auth/changePasswordForgot")
-    public ResponseEntity<?> changePasswordForgot(@RequestBody PasswordNew passwordNew)
+    public ResponseEntity<?> changePasswordForgot(@RequestBody @Valid PasswordNew passwordNew)
     {
         var result = iUser.changePasswordForgot(passwordNew);
         return _res.responseEntity(result,result.getCode());
     }
 
     @PostMapping("auth/validate-session")
-    public ResponseEntity<?> validSession(@RequestBody ValidSession validSession)
+    public ResponseEntity<?> validSession(@RequestBody @Valid ValidSession validSession)
     {
         var result = iUser.validSession(validSession);
         return _res.responseEntity(result,result.getCode());

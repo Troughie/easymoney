@@ -1,10 +1,13 @@
 package com.example.MoneyLover.infra.Transaction.ServiceImpl;
 
 import com.example.MoneyLover.config.Redis.RedisService;
+import com.example.MoneyLover.infra.Budget.Entity.Budget;
+import com.example.MoneyLover.infra.Budget.Repository.BudgetRepo;
 import com.example.MoneyLover.infra.Category.Entity.Category;
 import com.example.MoneyLover.infra.Category.Entity.CategoryType;
 import com.example.MoneyLover.infra.Category.Entity.Debt_loan_type;
 import com.example.MoneyLover.infra.Category.Repository.CategoryRepo;
+import com.example.MoneyLover.infra.Notification.Entiti.TypeNotification;
 import com.example.MoneyLover.infra.Notification.Service.NotificationService;
 import com.example.MoneyLover.infra.Recurring.Entity.Recurring;
 import com.example.MoneyLover.infra.Recurring.Repository.RecurringRepo;
@@ -27,6 +30,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -39,6 +44,7 @@ public class ITransaction extends ServiceExtended implements TransactionService 
     private final CategoryRepo categoryRepo;
     private final WalletRepo walletRepo;
     private final RecurringRepo recurringRepo;
+    private final BudgetRepo budgetRepo;
 
     private final RedisService _redis;
 
@@ -97,12 +103,36 @@ public class ITransaction extends ServiceExtended implements TransactionService 
             if(isPermission){
                     return _res.createErrorResponse("Can't add transaction, you don't have permission!!!",400);
             }
+
             if(!wallet.getUser().getId().equals(user.getId())){
-                users.add(user);
+                users.add(wallet.getUser());
+                users.remove(user);
             }
             Transaction transaction=mappedTransaction(user,transactionDtoAdd,null);
             transactionRepo.save(transaction);
+
+            Budget budget = budgetRepo.findBudgetAmount(user.getId(),transactionDtoAdd.getWallet(),transactionDtoAdd.getCategory(),LocalDate.now());
+
+            if(budget!=null){
+                List<Transaction> transactions = transactionRepo.getTransactionByDateBetweenAndCategoryId(budget.getPeriod_start(),budget.getPeriod_end(),transactionDtoAdd.getCategory());
+                List<Transaction> tranExpense = transactions.stream().filter(e->e.getCategory().getCategoryType().equals(CategoryType.Expense)).toList();
+                List<Transaction> tranIncome = transactions.stream().filter(e->e.getCategory().getCategoryType().equals(CategoryType.Income)).toList();
+
+                long totalAmount = calculateTotalAmount(tranIncome) - calculateTotalAmount(tranExpense);
+                if(budget.getAmount()<Math.abs(totalAmount)){
+                    List<User> users1 = new ArrayList<>();
+                    users1.add(user);
+
+                    if(!user.getId().equals(wallet.getUser().getId())){
+                        users1.add(wallet.getUser());
+                    }
+                    long amount = budget.getAmount()-totalAmount;
+                    String message = " spent over " + amount + " in budget ";
+                    notificationService.sendNotificationBudget(users1,user.getUsername(), message, budget.getCategory().getName(), TypeNotification.budget,wallet.getId());
+                }
+            }
             notificationService.sendNotificationTransaction(users,user.getUsername(),wallet.getName(),transaction.getCategory().getName());
+
             _redis.removeValue("wallet"+user.getId());
             return _res.createSuccessResponse("Add transaction successfully",200,transaction);
         }catch (Exception e)
@@ -167,6 +197,17 @@ public class ITransaction extends ServiceExtended implements TransactionService 
         return _res.createSuccessResponse(200,transactions);
     }
 
+//    private long calculateTotalAmount(List<Transaction> transactions) {
+//        long amount =0;
+//        for (Transaction transaction : transactions) {
+//            if(transaction.getCategory().getCategoryType().equals(CategoryType.Expense)){
+//                amount -= transaction.getAmount();
+//            }else{
+//                amount += transaction.getAmount();
+//            }
+//        }
+//    }
+
     private long tranBalanceMonth(LocalDate date, Wallet wallet) {
 
         List<Transaction> transExpenseEnding = getTransactionsByTypeAndDate(wallet, CategoryType.Expense,date);
@@ -180,7 +221,7 @@ public class ITransaction extends ServiceExtended implements TransactionService 
 
 
         long balancePlusEnding = calculateTotalAmount(transExpenseEnding);
-        long balanceDivideEnding =calculateTotalAmount(transIncomeEnding);
+        long balanceDivideEnding = calculateTotalAmount(transIncomeEnding);
         long balancePlusDebt =calculateTotalAmount(tranDebt);
         long balanceDivideDebt =calculateTotalAmount(transLoan);
         return wallet.getBalance() -balancePlusEnding +balanceDivideEnding+balancePlusDebt-balanceDivideDebt;

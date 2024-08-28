@@ -1,6 +1,7 @@
 package com.example.MoneyLover.infra.Wallet.Mapper;
 
 import com.example.MoneyLover.infra.Transaction.Entity.Transaction;
+import com.example.MoneyLover.infra.User.Mapper.UserMapper;
 import com.example.MoneyLover.infra.Wallet.Dto.ManagerResponse;
 import com.example.MoneyLover.infra.Wallet.Dto.Wallet_dto;
 import com.example.MoneyLover.infra.Wallet.Entity.Wallet;
@@ -42,6 +43,7 @@ public interface WalletMapper {
         }
         Wallet_dto walletDto = WalletMapper.INSTANCE.toWallet_DTO(wallet);
         walletDto.setManagers(managerResponses);
+        walletDto.setUser(UserMapper.INSTANCE.toUserResponse(wallet.getUser()));
         return walletDto;
     }
 

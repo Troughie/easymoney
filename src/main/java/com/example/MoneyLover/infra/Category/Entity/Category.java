@@ -44,4 +44,12 @@ public class Category {
     @OneToMany(mappedBy = "category")
     @JsonIgnore
     List<Budget> budgets =new ArrayList<>();
+
+    public Category(String name, CategoryType categoryType, String categoryIcon, boolean defaultIncome, int debt_loan_type) {
+        this.name = name;
+        this.categoryType = categoryType;
+        this.categoryIcon = categoryIcon;
+        this.defaultIncome = defaultIncome;
+        this.debt_loan_type = debt_loan_type;
+    }
 }

@@ -29,4 +29,6 @@ public interface TransactionRepo extends JpaRepository<Transaction,String> , Jpa
 
     @Query("select t from Transaction t where t.remind=true")
     List<Transaction> getTrans();
+
+    List<Transaction> getTransactionByDateBetweenAndCategoryId(LocalDate date1, LocalDate date2, String category);
 }

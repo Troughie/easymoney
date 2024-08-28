@@ -10,6 +10,7 @@ import com.example.MoneyLover.infra.User.Entity.User;
 import com.example.MoneyLover.shares.Entity.ApiResponse;
 import com.example.MoneyLover.shares.HandleException.ResponseException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -56,6 +57,7 @@ public class INotification implements NotificationService {
         return _res.createSuccessResponse("success",200);
     }
 
+    @Async
     public void sendNotificationTransaction(List<User> users,String user, String wallet, String category) {
         Notification notification = new Notification();
         notification.setCategory(category);
@@ -67,18 +69,44 @@ public class INotification implements NotificationService {
         }
         notification.setUser(user);
         notification.setUnread(true);
-        notification.setType(TypeNotification.transaction);
+        notification.setType(TypeNotification.transaction.name());
         notification.setCreatedDate(LocalDateTime.now());
         _notificationRepo.save(notification);
     }
 
-    public void sendNotificationFriend(User user,String creator){
+    @Async
+    public void sendNotificationFriend(User user,String creator,String message){
         Notification notification = new Notification();
         notification.setUsers(new ArrayList<>());
         notification.getUsers().add(user);
+        if(message!=null &&  !message.isEmpty()){
+            notification.setMessage(message);
+        }
         notification.setUser(creator);
         notification.setUnread(true);
-        notification.setType(TypeNotification.friend);
+        notification.setType(TypeNotification.friend.name());
+        notification.setCreatedDate(LocalDateTime.now());
+        _notificationRepo.save(notification);
+    }
+
+    @Async
+    public void sendNotificationBudget(List<User> users,String user,String message , String category,TypeNotification type,String wallet) {
+        Notification notification = new Notification();
+        notification.setUsers(new ArrayList<>());
+
+        for(User u : users) {
+            notification.getUsers().add(u);
+        }
+
+        if(message!=null &&  !message.isEmpty()){
+            notification.setMessage(message);
+        }
+
+        notification.setUser(user);
+        notification.setCategory(category);
+        notification.setUnread(true);
+        notification.setType(type.name());
+        notification.setWallet(wallet);
         notification.setCreatedDate(LocalDateTime.now());
         _notificationRepo.save(notification);
     }

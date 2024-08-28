@@ -1,6 +1,8 @@
 package com.example.MoneyLover.infra.Budget.Dto;
 
 import com.example.MoneyLover.infra.Category.Entity.Category;
+import com.example.MoneyLover.infra.User.Dto.UserResponse;
+import com.example.MoneyLover.infra.User.Entity.User;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -29,4 +31,6 @@ public class Budget_response {
     String name;
 
     String wallet;
+
+    UserResponse user;
 }

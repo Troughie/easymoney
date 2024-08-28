@@ -33,6 +33,7 @@ public class MailServiceImpl implements MailService{
     }
 
     @Override
+    @Async
     public void sendMailTransaction(MailDto<TransEmail> request) throws MessagingException {
 
         Context context = new Context();

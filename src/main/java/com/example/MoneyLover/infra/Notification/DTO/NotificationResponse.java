@@ -18,13 +18,17 @@ public class NotificationResponse {
 
     String user;
 
+    String userId;
+
     String wallet;
+
     String category;
+
     String message;
 
     LocalDateTime createdDate;
 
     boolean unread;
 
-    TypeNotification type;
+    String type;
 }
