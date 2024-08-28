@@ -12,10 +12,10 @@ import java.util.List;
 
 public interface BudgetRepo extends JpaRepository<Budget,String> {
 
-    @Query("select b from Budget b where b.period_end >?2 and (?1 IS NULL OR b.wallet.id = ?1)")
+    @Query("select b from Budget b where b.period_end >?2 and b.wallet.id = ?1")
     List<Budget> findAllByUser( String wallet, LocalDate today);
 
-    @Query("select b from Budget b where b.period_end <=?2 AND (?1 IS NULL OR b.wallet.id = ?1)")
+    @Query("select b from Budget b where b.period_end <=?2 AND b.wallet.id = ?1")
     List<Budget> findAllByUserExpired( String wallet, LocalDate today);
 
 

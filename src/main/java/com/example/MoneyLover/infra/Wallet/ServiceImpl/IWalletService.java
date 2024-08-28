@@ -59,7 +59,6 @@ public class IWalletService extends ServiceExtended implements WalletService  {
 
     private final CategoryRepo categoryRepo;
 
-    private final RedisService _redis;
     @Override
     public ApiResponse<?> addWallet(User user, Wallet_dto walletDto) {
         Wallet wallet = WalletMapper.INSTANCE.toWallet(walletDto);
@@ -213,12 +212,6 @@ public class IWalletService extends ServiceExtended implements WalletService  {
         return resultWallet;
     }
 
-    public void saveWalletToCache(User user,List<Wallet_dto> walletDtos)
-    {
-        _redis.setList("wallet"+user.getId(),walletDtos,30, TimeUnit.SECONDS);
-    }
-
-
     public ApiResponse<?> deleteWallet(User user,String id)
     {
         try {
@@ -242,11 +235,6 @@ public class IWalletService extends ServiceExtended implements WalletService  {
         }catch (Exception e){
             return _res.createErrorResponse(e.getMessage(),500);
         }
-    }
-
-    public List<Wallet_dto> getWalletFromCache(User user)
-    {
-        return _redis.getList("wallet"+user.getId(),Wallet_dto.class);
     }
 
     public ApiResponse<?> wallets(User user, PaginationParams paginationParams) {
