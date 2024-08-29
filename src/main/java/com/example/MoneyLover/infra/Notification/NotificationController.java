@@ -3,6 +3,7 @@ package com.example.MoneyLover.infra.Notification;
 import com.example.MoneyLover.infra.Notification.DTO.NotificationResponse;
 import com.example.MoneyLover.infra.Notification.Service.NotificationService;
 import com.example.MoneyLover.infra.User.Entity.User;
+import com.example.MoneyLover.shares.Entity.PaginationParams;
 import com.example.MoneyLover.shares.HandleException.ResponseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ public class NotificationController {
     @Autowired
     private NotificationService notificationService;
     @GetMapping("/notifications")
-    public ResponseEntity<?> getNotification(@AuthenticationPrincipal User user, @RequestParam(required = false) String status) {
+    public ResponseEntity<?> getNotification(@AuthenticationPrincipal User user, @RequestParam(required = false) String status, @ModelAttribute PaginationParams paginationParams) {
         var result = notificationService.getNotification(user,status);
         return _res.responseEntity(result,result.getCode());
     }

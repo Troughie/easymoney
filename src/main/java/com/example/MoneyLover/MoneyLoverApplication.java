@@ -103,12 +103,12 @@ public class MoneyLoverApplication implements CommandLineRunner {
 			}
 
 			for (Entry<String, String> entry : iconsIncome.entrySet()) {
-				Category Category = new Category( entry.getKey(), CategoryType.Expense,entry.getValue(),true,0);
+				Category Category = new Category( entry.getKey(), CategoryType.Income,entry.getValue(),true,0);
 				categoryRepo.save(Category);
 			}
 
 			for (Entry<String, String> entry : iconsDebLoan.entrySet()) {
-				Category Category = new Category( entry.getKey(), CategoryType.Expense,entry.getValue(),true,0);
+				Category Category = new Category( entry.getKey(), CategoryType.Debt_Loan,entry.getValue(),true,0);
 				categoryRepo.save(Category);
 			}
 

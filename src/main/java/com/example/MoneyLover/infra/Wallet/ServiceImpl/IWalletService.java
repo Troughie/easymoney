@@ -30,6 +30,7 @@ import com.example.MoneyLover.shares.HandleException.ResponseException;
 import com.example.MoneyLover.shares.Service.ServiceExtended;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
+import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -201,9 +202,10 @@ public class IWalletService extends ServiceExtended implements WalletService  {
 
     private Wallet_dto calculatorBalance(Wallet wallet)
     {
-        List<Transaction> transExpense = getTransactionsByTypeAndDate(wallet,CategoryType.Expense,null);
+        LocalDate date = LocalDate.now();
+        List<Transaction> transExpense = getTransactionsByTypeAndDate(wallet,CategoryType.Expense,date);
 
-        List<Transaction> transIncome = getTransactionsByTypeAndDate(wallet,CategoryType.Income,null);
+        List<Transaction> transIncome = getTransactionsByTypeAndDate(wallet,CategoryType.Income,date);
 
         long balancePlus = calculateTotalAmount(transExpense);
         long balanceDivide = calculateTotalAmount(transIncome);

@@ -60,12 +60,9 @@ public class ITransaction extends ServiceExtended implements TransactionService 
         // Get the current date
         LocalDate today = LocalDate.now();
 
-        if(filterTransaction.getEnd()!=null)
-        {
+        if(filterTransaction.getEnd()!=null) {
             boolean isDay = filterTransaction.getEnd().isAfter(today);
             filterTransaction.setEnd(isDay ? today : filterTransaction.getEnd());
-        }else{
-            filterTransaction.setEnd(today);
         }
 
         // Generate a specification based on the filter criteria
@@ -196,17 +193,6 @@ public class ITransaction extends ServiceExtended implements TransactionService 
         List<Transaction_Response> transactions = transactionPage.stream().map(TransactionMapper.INSTANCE::toTransactionDto).toList();
         return _res.createSuccessResponse(200,transactions);
     }
-
-//    private long calculateTotalAmount(List<Transaction> transactions) {
-//        long amount =0;
-//        for (Transaction transaction : transactions) {
-//            if(transaction.getCategory().getCategoryType().equals(CategoryType.Expense)){
-//                amount -= transaction.getAmount();
-//            }else{
-//                amount += transaction.getAmount();
-//            }
-//        }
-//    }
 
     private long tranBalanceMonth(LocalDate date, Wallet wallet) {
 

@@ -23,7 +23,7 @@ public class ServiceExtended {
                             if(date!=null){
                                     return tran.getDate().isBefore(date)||tran.getDate().isEqual(date);
                             }else{
-                                return tran.getDate().isBefore(LocalDate.now())||tran.getDate().isEqual(LocalDate.now());
+                                return tran.getDate().isAfter(LocalDate.now())||tran.getDate().isEqual(LocalDate.now());
                             }
                         }
                 )
