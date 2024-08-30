@@ -215,9 +215,9 @@ public class IUser implements UserService {
         return _res.createSuccessResponse("Success", 200);
     }
 
-    public ApiResponse<?> getUserAll(String code){
+    public ApiResponse<?> getUserAll(User user,String code){
         try{
-            List<User> users = userRepo.findAllContain(code);
+            List<User> users = userRepo.findAllContain(user,code);
             return _res.createSuccessResponse("Success", 200,users.stream().map(UserMapper.INSTANCE::toUserResponse).toList());
         }catch (Exception e){
             return _res.createErrorResponse(e.getMessage(), 500);

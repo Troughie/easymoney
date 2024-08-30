@@ -21,4 +21,6 @@ public interface FriendRepo extends JpaRepository<Friend,String> {
     List<Friend> findAllUserReceive(User user,String type);
 
     Friend findTopById(String id);
+
+    Friend findTopByUserAndFriend(User user,User friend);
 }

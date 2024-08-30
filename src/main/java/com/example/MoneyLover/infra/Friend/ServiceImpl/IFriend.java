@@ -110,6 +110,10 @@ public class IFriend implements FriendService {
             if(friend==null){
                 return _res.createErrorResponse("Some thing wrong!! try later", 400);
             }
+            User userFriend = friend.getFriend();
+            User user = friend.getUser();
+            Friend friendDelete2 = friendRepo.findTopByUserAndFriend(user,userFriend);
+            friendRepo.delete(friendDelete2);
             friendRepo.delete(friend);
             return _res.createSuccessResponse("Remove friend successfully",200);
         }catch (Exception e)

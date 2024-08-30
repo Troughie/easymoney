@@ -1,12 +1,14 @@
 package com.example.MoneyLover.infra.User;
 
 import com.example.MoneyLover.infra.User.Dto.*;
+import com.example.MoneyLover.infra.User.Entity.User;
 import com.example.MoneyLover.infra.User.ServiceImpl.IUser;
 import com.example.MoneyLover.shares.HandleException.ResponseException;
 import jakarta.validation.Valid;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -81,9 +83,9 @@ public class UserController {
     }
 
     @GetMapping("user/search/{code}")
-    public ResponseEntity<?> getAll(@PathVariable String code)
+    public ResponseEntity<?> getAll(@AuthenticationPrincipal User user,@PathVariable String code)
     {
-        var result = iUser.getUserAll(code);
+        var result = iUser.getUserAll(user,code);
         return _res.responseEntity(result,result.getCode());
     }
 }
