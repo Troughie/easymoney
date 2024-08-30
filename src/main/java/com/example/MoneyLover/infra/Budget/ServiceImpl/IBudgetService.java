@@ -95,7 +95,7 @@ public class IBudgetService extends ServiceExtended implements BudgetService {
             budget.setWallet(wallet);
             budget.setUser(user);
 
-            notificationService.sendNotificationBudget(users, user.getUsername(),message,category.getName(), TypeNotification.budgetCreate,wallet.getId());
+            notificationService.sendNotificationBudget(users, user,message,category.getName(), TypeNotification.budgetCreate,wallet.getId());
             // Save and return response
             budgetRepo.save(budget);
             return _res.createSuccessResponse(200, budget);

@@ -125,10 +125,10 @@ public class ITransaction extends ServiceExtended implements TransactionService 
                     }
                     long amount = budget.getAmount()-totalAmount;
                     String message = " spent over " + amount + " in budget ";
-                    notificationService.sendNotificationBudget(users1,user.getUsername(), message, budget.getCategory().getName(), TypeNotification.budget,wallet.getId());
+                    notificationService.sendNotificationBudget(users1,user, message, budget.getCategory().getName(), TypeNotification.budget,wallet.getId());
                 }
             }
-            notificationService.sendNotificationTransaction(users,user.getUsername(),wallet.getName(),transaction.getCategory().getName());
+            notificationService.sendNotificationTransaction(users,user,wallet.getName(),transaction.getCategory().getName());
 
             _redis.removeValue("wallet"+user.getId());
             return _res.createSuccessResponse("Add transaction successfully",200,transaction);

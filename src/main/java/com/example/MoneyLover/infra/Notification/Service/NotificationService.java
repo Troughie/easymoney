@@ -9,11 +9,11 @@ import java.util.List;
 
 public interface NotificationService {
     ApiResponse<?> getNotification(User user,String status);
-    void sendNotificationTransaction(List<User> users, String user, String wallet, String category);
+    void sendNotificationTransaction(List<User> users, User user, String wallet, String category);
 
-    void sendNotificationBudget(List<User> users, String user, String message , String category, TypeNotification type,String wallet);
+    void sendNotificationBudget(List<User> users, User user, String message , String category, TypeNotification type,String wallet);
 
-    void sendNotificationFriend(User user,String creator,String message);
+    void sendNotificationFriend(User user,User creator,String message);
     ApiResponse<?> markAsRead(String id);
     ApiResponse<?> makeAllAsRead(List<NotificationResponse> notifications);
 }

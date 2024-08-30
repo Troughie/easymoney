@@ -48,7 +48,7 @@ public class IFriend implements FriendService {
             friend.setStatus(StatusFriend.pending.name());
             friend.setCreatedAt(LocalDateTime.now());
             friendRepo.save(friend);
-            notificationService.sendNotificationFriend(friendAdd,user.getUsername(),null);
+            notificationService.sendNotificationFriend(friendAdd,user,null);
             return _res.createSuccessResponse("Add friend successfully",200);
         }catch (Exception e)
         {
@@ -95,7 +95,7 @@ public class IFriend implements FriendService {
             friend1.setStatus(StatusFriend.accepted.name());
             friend1.setCreatedAt(LocalDateTime.now());
             friendRepo.save(friend1);
-            notificationService.sendNotificationFriend(userRequest,user.getUsername(),"accepted your request");
+            notificationService.sendNotificationFriend(userRequest,user,"accepted your request");
             return _res.createSuccessResponse("Accept friend successfully",200);
         }catch (Exception e)
         {

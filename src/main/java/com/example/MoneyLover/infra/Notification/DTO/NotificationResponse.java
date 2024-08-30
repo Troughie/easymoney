@@ -1,6 +1,7 @@
 package com.example.MoneyLover.infra.Notification.DTO;
 
 import com.example.MoneyLover.infra.Notification.Entiti.TypeNotification;
+import com.example.MoneyLover.infra.User.Dto.UserResponse;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -18,7 +19,7 @@ public class NotificationResponse {
 
     String user;
 
-    String userId;
+    UserResponse creator;
 
     String wallet;
 

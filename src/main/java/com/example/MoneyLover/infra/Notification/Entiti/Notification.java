@@ -31,6 +31,9 @@ public class Notification {
 
     String user;
 
+    @OneToOne
+    User creator;
+
     String wallet;
     String category;
     String message;

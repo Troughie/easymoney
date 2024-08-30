@@ -26,9 +26,9 @@ public class INotification implements NotificationService {
     public ApiResponse<?> getNotification(User user,String status) {
         try {
             if("unread".equalsIgnoreCase(status)) {
-                return _res.createSuccessResponse(200, NotificationMapper.INSTANCE.toNotificationResponse(_notificationRepo.findAllByUsersContainingAndUnreadEquals(user,true)));
+                return _res.createSuccessResponse(200, NotificationMapper.INSTANCE.toNotificationResponse2(_notificationRepo.findAllByUsersContainingAndUnreadEquals(user,true)));
             }
-            return _res.createSuccessResponse(200, NotificationMapper.INSTANCE.toNotificationResponse(_notificationRepo.findAllByUsersContaining(user)));
+            return _res.createSuccessResponse(200, NotificationMapper.INSTANCE.toNotificationResponse2(_notificationRepo.findAllByUsersContaining(user)));
         }catch (Exception e){
             return _res.createErrorResponse(e.getMessage(),500);
         }
@@ -58,7 +58,7 @@ public class INotification implements NotificationService {
     }
 
     @Async
-    public void sendNotificationTransaction(List<User> users,String user, String wallet, String category) {
+    public void sendNotificationTransaction(List<User> users,User user, String wallet, String category) {
         Notification notification = new Notification();
         notification.setCategory(category);
         notification.setWallet(wallet);
@@ -67,7 +67,8 @@ public class INotification implements NotificationService {
         for(User u : users) {
             notification.getUsers().add(u);
         }
-        notification.setUser(user);
+        notification.setUser(user.getUsername());
+        notification.setCreator(user);
         notification.setUnread(true);
         notification.setType(TypeNotification.transaction.name());
         notification.setCreatedDate(LocalDateTime.now());
@@ -75,14 +76,15 @@ public class INotification implements NotificationService {
     }
 
     @Async
-    public void sendNotificationFriend(User user,String creator,String message){
+    public void sendNotificationFriend(User user,User creator,String message){
         Notification notification = new Notification();
         notification.setUsers(new ArrayList<>());
         notification.getUsers().add(user);
         if(message!=null &&  !message.isEmpty()){
             notification.setMessage(message);
         }
-        notification.setUser(creator);
+        notification.setUser(creator.getUsername());
+        notification.setCreator(creator);
         notification.setUnread(true);
         notification.setType(TypeNotification.friend.name());
         notification.setCreatedDate(LocalDateTime.now());
@@ -90,7 +92,7 @@ public class INotification implements NotificationService {
     }
 
     @Async
-    public void sendNotificationBudget(List<User> users,String user,String message , String category,TypeNotification type,String wallet) {
+    public void sendNotificationBudget(List<User> users,User user,String message , String category,TypeNotification type,String wallet) {
         Notification notification = new Notification();
         notification.setUsers(new ArrayList<>());
 
@@ -102,7 +104,8 @@ public class INotification implements NotificationService {
             notification.setMessage(message);
         }
 
-        notification.setUser(user);
+        notification.setUser(user.getUsername());
+        notification.setCreator(user);
         notification.setCategory(category);
         notification.setUnread(true);
         notification.setType(type.name());
