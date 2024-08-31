@@ -32,13 +32,15 @@ public class IFriend implements FriendService {
             if (friendAdd == null) {
                 return _res.createErrorResponse("User not found", 404);
             }
-            Friend existFriend = friendRepo.findFriendExist(user,friendAdd,StatusFriend.pending.name());
+            Friend existFriend1 = friendRepo.findFriendExist(user,friendAdd,StatusFriend.pending.name());
+            Friend existFriend = friendRepo.findFriendExist(friendAdd,user,StatusFriend.pending.name());
             Friend existFriendAccept = friendRepo.findFriendExist(user,friendAdd,StatusFriend.accepted.name());
-            if(existFriend!=null){
+            Friend existFriendAccept1 = friendRepo.findFriendExist(friendAdd,user,StatusFriend.accepted.name());
+            if(existFriend!=null ||existFriend1!=null){
                 return _res.createErrorResponse("Already add friend", 400);
             }
 
-            if(existFriendAccept!=null){
+            if(existFriendAccept!=null||existFriendAccept1!=null){
                 return _res.createErrorResponse("Already in friend list", 400);
             }
 
