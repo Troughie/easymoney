@@ -94,6 +94,7 @@ public class IUser implements UserService {
     {
         try {
             User user = userRepo.findTopByEmail(emailForgot.getEmail());
+
             String otp = GenerateString.generateString(8, typeGenerate.number);
             String session = GenerateString.generateString(14,typeGenerate.string);
             //set otp to  cache

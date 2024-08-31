@@ -17,7 +17,6 @@ import lombok.experimental.FieldDefaults;
 public class PasswordNew {
     @NotBlank
     @NotNull
-    @Email
     String account;
 
     @NotBlank
